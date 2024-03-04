@@ -175,7 +175,8 @@ class Foyer_Slide {
 		}
 
 		if (!empty ($channel) )	{
-			$data['foyer-slide-duration'] = $channel->get_slides_duration();
+            $data['foyer-slide-duration']  = $channel->get_slide_duration_for_slide( $this->ID );
+            $data['foyer-slide-id'] = $this->ID;
 		}
 
 		if (empty($data)) {

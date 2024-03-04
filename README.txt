@@ -147,6 +147,14 @@ Settings for W3 Total Cache: Add `/foyer/*` on a new line under Performance > Pa
 
 == Changelog ==
 
+= 1.7.6 =
+Release Date: -- not publicly released --
+Change Log: 
+2024-03-01 (March 1, 2024)
+--------------------------
+- Added ability to adjust a slide's duration individually in a channel(falls back to the channel's default duration)
+- So the same slide can be shown in different channels with different durations.
+
 = 1.7 =
 Release Date: November 15, 2018
 

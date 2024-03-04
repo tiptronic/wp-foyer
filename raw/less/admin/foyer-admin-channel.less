@@ -1,3 +1,6 @@
+@slides-editor-slides-width: 1920px;
+@slides-editor-slides-height: 1080px;
+
 body.post-php.post-type-foyer_channel {
 	#edit-slug-box {
 		display: none;
@@ -21,14 +24,14 @@ body.post-php.post-type-foyer_channel {
 		.foyer_slides_editor_slides_slide_iframe_container {
 			border: 1px solid @slides-editor-slide-border-color;
 			background-color: @slides-editor-slide-bg-color;
-			width: 108px;
-			height: 192px;
+			width: (@slides-editor-slides-width/10);
+			height: (@slides-editor-slides-height/10);
 			position: relative;
 
 
 			iframe {
-				width: 1080px;
-				height: 1920px;
+				width: @slides-editor-slides-width;
+				height: @slides-editor-slides-height;
 				transform: scale(0.1, 0.1);
 				transform-origin: top left;
 				pointer-events: none;

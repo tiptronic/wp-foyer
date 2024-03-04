@@ -35,11 +35,29 @@ class Foyer_Channel {
 	/**
 	 * The slides duration setting of this channel.
 	 *
-	 * @since    1.0.0
+	 * @since    1.7.6
 	 * @access   private
 	 * @var      string    $slides    The slides duration setting of this channel.
 	 */
 	private $slides_duration;
+
+    /**
+	 * The slide durations JSON setting of this channel. +++andy
+     * JSON is written to the database as a string.
+     * It is read from the database as a string and then converted to an array.
+     * {
+     *      key: slide ID
+     *      value: slide duration
+     * }
+     * 
+     * Note: everything must be set in quotes
+     * e.g. {"5":"6","6":"7"}
+	 *
+	 * @since    1.7.6
+	 * @access   private
+	 * @var      string    $slides    The slides duration setting of this channel.
+	 */
+	private $slide_durations;
 
 	/**
 	 * The slides transition setting of this channel.
@@ -137,6 +155,18 @@ class Foyer_Channel {
 		return get_post_meta( $this->ID, Foyer_Channel::post_type_name . '_slides_duration', true );
 	}
 
+    /**
+	 * Get single slides duration setting as JSON for this channel as saved in the database.
+	 *
+	 * @since	1.7.6
+	 * @access	public
+	 * @return	string		The slide durations setting for this channel as saved in the database.
+	 */
+
+    public function get_saved_slide_durations() { //+++andy
+        return get_post_meta( $this->ID, Foyer_Channel::post_type_name . '_slide_durations', true );
+    }
+
 	/**
 	 * Get slides transition setting for this channel as saved in the database.
 	 *
@@ -168,6 +198,41 @@ class Foyer_Channel {
 
 		return $this->slides_duration;
 	}
+
+    /**
+	 * Get slide durations JSON setting for this channel, or the default slides duration when not set. +++andy
+	 *
+	 * @since	1.7.6
+	 * @access	public
+	 * @return	string		The slides duration setting for this channel, or the default slides duration when not set.
+	 */
+	public function get_slide_durations() {
+
+		if ( ! isset( $this->slide_durations ) ) {
+            $slide_durations = self::get_saved_slide_durations();
+			if ( empty( $slide_durations ) ) {
+                $slide_durations = array();
+                // $slide_durations = array(
+                //     5 => 6,
+                //     8 => 22,
+                //     11 => 11,
+                //     12 => 14
+                // );
+                // update_post_meta( $this->ID, Foyer_Channel::post_type_name . '_slide_durations', $slide_durations );
+			}
+            $this->slide_durations = $slide_durations;
+		}
+
+		return $this->slide_durations;
+	}
+
+    public function get_slide_duration_for_slide($slide_id) {
+        $slide_durations = $this->get_slide_durations();
+        if(isset($slide_durations[$slide_id])) {
+            return $slide_durations[$slide_id];
+        }
+        return $this->get_slides_duration();
+    }
 
 	/**
 	 * Get slides transition setting for this channel, or the default slides transition when not set.

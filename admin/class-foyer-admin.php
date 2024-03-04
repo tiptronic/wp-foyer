@@ -40,6 +40,7 @@ class Foyer_Admin {
 		add_action( 'add_meta_boxes', array( 'Foyer_Admin_Channel', 'add_slides_settings_meta_box' ), 40 );
 		add_action( 'save_post', array( 'Foyer_Admin_Channel', 'save_channel' ) );
 		add_action( 'wp_ajax_foyer_slides_editor_add_slide', array( 'Foyer_Admin_Channel', 'add_slide_over_ajax' ) );
+        add_action( 'wp_ajax_foyer_slides_editor_update_slide_duration', array( 'Foyer_Admin_Channel', 'update_slide_duration_over_ajax' ) );
 		add_action( 'wp_ajax_foyer_slides_editor_remove_slide', array( 'Foyer_Admin_Channel', 'remove_slide_over_ajax' ) );
 		add_action( 'wp_ajax_foyer_slides_editor_reorder_slides', array( 'Foyer_Admin_Channel', 'reorder_slides_over_ajax' ) );
 		add_filter( 'get_sample_permalink_html', array( 'Foyer_Admin_Channel', 'remove_sample_permalink' ) );

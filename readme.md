@@ -23,6 +23,16 @@ Foyer comes with build in support for the [Theater for WordPress plugin](https:/
 [https://wordpress.org/plugins/foyer/](https://wordpress.org/plugins/foyer/)
 
 
+## Change Log
+2024-03-01 (March 1, 2024)
+--------------------------
+Release Date: -- not publicly released --
+
+- Added ability to adjust a slide's duration individually in a channel(falls back to the channel's default duration). So the same slide can be shown in different channels with different durations. To adjust the setting, a input box is shown below each slide in the channel editor.
+  
+![slide duration input](images/wp-foyer_slide_durations.jpg)]
+
+
 ## Feature suggestions wanted!
 
 Since this plugin is quite new, I'm curious..

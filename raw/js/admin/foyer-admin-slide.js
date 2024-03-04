@@ -119,9 +119,15 @@ jQuery( function() {
 
 	// Uploading files
 	var wp_media_post_id;
+    if(typeof wp === 'undefined') {
+        return;
+    };
 
-	if (wp.media) {
-		wp_media_post_id = wp.media.model.settings.post.id;
+    if(wp?.media) {
+        if(wp.media.model.settings.post?.id) {
+            wp_media_post_id = wp.media.model.settings.post.id;
+        }
+		
 
 		jQuery('.slide_file_upload_button').on('click', function(event) {
 			var slide_file_field;
@@ -184,8 +190,10 @@ jQuery( function() {
 				slide_file_field.find('.slide_file_value').val(attachment.id);
 				slide_file_field.find('.slide_file_value').trigger('change');
 
-				// Restore the main post ID
-				wp.media.model.settings.post.id = wp_media_post_id;
+                // Restore the main post ID
+                if(wp_media_post_id) {
+                    wp.media.model.settings.post.id = wp_media_post_id;
+                }
 
 				slide_file_field.removeClass('empty');
 			});

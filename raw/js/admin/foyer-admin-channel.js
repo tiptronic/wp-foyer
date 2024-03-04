@@ -15,13 +15,38 @@
 
 		var $slides_editor = $('.foyer_slides_editor');
 		var $slides_editor_slides = $('.foyer_slides_editor_slides');
+        console.log('setup_slides_editor_actions', $slides_editor_slides);
 
-		/* Set up add action in the slides editor */
+        /* Set up add action in the slides editor */
+
+        $('.foyer_slides_editor_slides_slide_duration').unbind('change').change(function(e) {
+            var slide_duration = +$(e.currentTarget).val();
+            const slide_id = $(e.currentTarget).data('slide-id');
+
+            var data = {
+                'action': 'foyer_slides_editor_update_slide_duration',
+                'channel_id': $slides_editor.data('channel-id'),
+                'slide_id': slide_id,
+                'slide_duration': slide_duration,
+                'nonce': foyer_slides_editor_security.nonce,
+            };
+
+
+            console.log('foyer_slides_editor_update_slide_duration:', slide_id, slide_duration, data);
+            $.post(ajaxurl, data, function(response) {
+                console.log('response', response);
+                if (response != '') {
+                    // $slides_editor_slides.replaceWith(response);
+                    // $('.foyer_slides_editor_add_select').val('');
+                    // setup_slides_editor_actions();
+                }
+        	});
+        });
 
 		$('.foyer_slides_editor_add_select').unbind('change').change(function(e) {
 
 			var slide_id = $(e.currentTarget).val();
-
+            console.log('foyer_slides_editor_add_select::slide_id', slide_id);
 			if ( slide_id > 0 ) {
 
 				var data = {

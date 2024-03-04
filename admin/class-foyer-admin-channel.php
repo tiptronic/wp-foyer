@@ -62,7 +62,7 @@ class Foyer_Admin_Channel {
 
 		$channel = new Foyer_Channel( $channel_id );
 		$slides = $channel->get_slides();
-
+        
 		$new_slides = array();
 		foreach( $slides as $slide ) {
 			$new_slides[] = $slide->ID;
@@ -75,6 +75,27 @@ class Foyer_Admin_Channel {
 		echo self::get_slides_list_html( get_post( $channel_id ) );
 		wp_die();
 	}
+
+    static function update_slide_duration_over_ajax() { //+++andy foyer_slides_editor_update_slide_duration
+        check_ajax_referer( 'foyer_slides_editor_ajax_nonce', 'nonce' , true );
+        
+        $channel_id = intval( $_POST['channel_id'] );
+        $slide_id = intval( $_POST['slide_id'] );
+
+        $slide_duration = intval( $_POST['slide_duration'] );
+        if ( empty( $channel_id ) || empty( $slide_id ) || empty( $slide_duration ) ) {
+            wp_die();
+        }
+        $channel = new Foyer_Channel( $channel_id );
+        $slide_durations = $channel->get_slide_durations();
+        $slide_durations[$slide_id] = $slide_duration;
+        // $channel->set_slide_durations( $slide_durations );
+        update_post_meta( $channel_id, Foyer_Channel::post_type_name . '_slide_durations', $slide_durations );
+        echo self::get_slides_list_html( get_post( $channel_id ) );
+        wp_die();
+    
+
+    }
 
 	/**
 	 * Adds the slides editor meta box to the channel admin page.
@@ -348,7 +369,7 @@ class Foyer_Admin_Channel {
 
 		$channel = new Foyer_Channel( $post );
 		$slides = $channel->get_slides();
-
+        $slide_durations = $channel->get_slide_durations();
 		/**
 		 * Filters whether to display slide previews.
 		 *
@@ -379,13 +400,15 @@ class Foyer_Admin_Channel {
 							$slide_url = add_query_arg( 'foyer-preview', 1, $slide_url );
 							$slide_format_data = Foyer_Slides::get_slide_format_by_slug( $slide->get_format() );
 							$slide_background_data = Foyer_Slides::get_slide_background_by_slug( $slide->get_background() );
-
+                            $offs = $channel->get_slide_duration_for_slide( $slide->ID );
+               
 							?>
 								<div class="foyer_slides_editor_slides_slide<?php
 									if ( $slide->is_stack() ) { echo ' foyer-slide-is-stack'; }
 								?>"
 									data-slide-id="<?php echo intval( $slide->ID ); ?>"
 									data-slide-key="<?php echo $i; ?>"
+                                    data-slide-durations="<?php echo $offs; ?>"
 								>
 									<div class="foyer_slides_editor_slides_slide_iframe_container">
 										<div class="foyer_slides_editor_slides_slide_iframe_container_overlay">
@@ -400,11 +423,12 @@ class Foyer_Admin_Channel {
 											</dl>
 										</div>
 										<?php if ( $display_slide_previews ) { ?>
-											<iframe src="<?php echo esc_url( $slide_url ); ?>" width="1080" height="1920"></iframe>
+											<iframe src="<?php echo esc_url( $slide_url ); ?>" width="1920" height="1080"></iframe>
 										<?php } ?>
 									</div>
 									<div class="foyer_slides_editor_slides_slide_caption">
-										<?php echo esc_html_x( 'Slide', 'slide cpt', 'foyer' ) . ' ' . ( $i + 1 ); ?>
+                                        <div class="foyer_slides_editor_slides_slide_props"><input type="number" data-slide-id="<?php echo $slide->ID; ?>" class="foyer_slides_editor_slides_slide_duration" name="foyer_slides_editor_slides_slide_duration" value="<?php echo $offs; ?>" min="0" step="1" /></div>
+										<?php echo esc_html_x( 'Slide', 'slide cpt', 'foyer' ) . ' ' . ( $i + 1 ) . ' ' . ( $slide->ID ); ?>
 										(<a href="#" class="foyer_slides_editor_slides_slide_remove">x</a>)
 									</div>
 								</div>
@@ -618,10 +642,12 @@ class Foyer_Admin_Channel {
 		/* Check if slides settings are included (empty or not) in form */
 		if (
 			! isset( $_POST['foyer_slides_settings_duration'] ) ||
-			! isset( $_POST['foyer_slides_settings_transition'] )
+			! isset( $_POST['foyer_slides_settings_transition'])
 		) {
 			return $post_id;
 		}
+
+        $a = $_POST; //+++andy
 
 		$foyer_slides_settings_duration = intval( $_POST['foyer_slides_settings_duration'] );
 		if ( empty( $foyer_slides_settings_duration ) ) {
